@@ -14,7 +14,7 @@ const PasswordField = ({ onInputChange, placeHolderText, value }) => {
             secureTextEntry={passwordVisible}
             placeholderTextColor={'#a2a2a2'}
             color={'#a2a2a2'}
-            onChangeText={t => {onInputChange(t)}}
+            onChangeText={t => { onInputChange(t) }}
         />
         <TouchableOpacity
             style={styles.iconContainer}
@@ -56,4 +56,4 @@ const styles = StyleSheet.create({
     }
 })
 
-export default PasswordField ;
+export default PasswordField;

@@ -23,33 +23,28 @@ const SignupScreenPhone = () => {
     const isLoading = useSelector(state => state.loading.value)
     const verificationId = useSelector(state => state.firebaseStore.phoneAuth.verificationId)
 
-    const handlePhoneNumberInput = ( number ) => {
-        if(isPressed)
-        {
+    const handlePhoneNumberInput = (number) => {
+        if (isPressed) {
             setIsPressed(false)
         }
-        if(number.length <= 10 && ( number === '' || /^(0|[1-9][0-9]*)$/.test(number)))
-        {
+        if (number.length <= 10 && (number === '' || /^(0|[1-9][0-9]*)$/.test(number))) {
             setPhoneNumber(number)
         }
     }
 
     const handlePress = async () => {
-        if(phoneNumber.length != 10)
-        {
+        if (phoneNumber.length != 10) {
             setIsValid(false)
         }
-        else
-        {
+        else {
             setIsValid(true)
             setIsPressed(true)
             dispatch(CHANGE_LOADING(true))
         }
     }
-    
+
     useEffect(() => {
-        if(verificationId)
-        {
+        if (verificationId) {
             dispatch(CHANGE_LOADING(false))
             setIsPressed(false)
             navigation.navigate('OTPVerification', { phoneNumber: phoneNumber, actionType: 'signup' })
@@ -68,14 +63,14 @@ const SignupScreenPhone = () => {
         </View>
         <View style={styles.tabContainer}>
             <View style={{ ...styles.subTabContainer, borderBottomColor: 'white', borderWidth: 2 }}>
-                <Text style={{color: 'white'}}>PHONE NUMBER</Text>
+                <Text style={{ color: 'white' }}>PHONE NUMBER</Text>
             </View>
             <TouchableOpacity
                 style={{ ...styles.subTabContainer, borderBottomColor: 'grey', borderWidth: 1 }}
                 activeOpacity={0.5}
                 onPress={() => navigation.navigate('SignupEmail')}
             >
-            <Text style={{color: 'white'}}>EMAIL ADDRESS</Text>
+                <Text style={{ color: 'white' }}>EMAIL ADDRESS</Text>
             </TouchableOpacity>
         </View>
         <PhoneNumberField
@@ -85,18 +80,18 @@ const SignupScreenPhone = () => {
         />
         {
             isValid
-            ?   null
-            :   <Text style={{color: 'red', alignSelf: 'flex-start', fontSize: 12, marginTop: 4}}>Invalid Parameters</Text>
+                ? null
+                : <Text style={{ color: 'red', alignSelf: 'flex-start', fontSize: 12, marginTop: 4 }}>Invalid Parameters</Text>
         }
         <Text style={styles.noticeContainer}>You may receive SMS notifications from us for security and login purposes.</Text>
         <PrimaryButton
             text={'Next'}
             handlePress={() => {
                 phoneNumber
-                ? handlePress()
-                : null
+                    ? handlePress()
+                    : null
             }}
-            allowed={ phoneNumber ? true : false }
+            allowed={phoneNumber ? true : false}
             useIndicator={isLoading}
         />
         <AlreadyLogIn />
@@ -139,4 +134,4 @@ const styles = StyleSheet.create({
     }
 })
 
-export default SignupScreenPhone ;
+export default SignupScreenPhone;

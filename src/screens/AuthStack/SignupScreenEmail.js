@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Text, View, StyleSheet, StatusBar, TouchableOpacity} from 'react-native'
+import { Text, View, StyleSheet, StatusBar, TouchableOpacity } from 'react-native'
 import { useNavigation } from '@react-navigation/native';
 import { Feather } from '@expo/vector-icons';
 
@@ -19,7 +19,7 @@ const SignupScreenEmail = () => {
     const [password, setPassword] = useState('')
     const [isValid, setIsValid] = useState(true)
     const [isModalVisible, setIsModalVisible] = useState(false)
-    
+
     const navigation = useNavigation()
     const dispatch = useDispatch()
 
@@ -36,38 +36,34 @@ const SignupScreenEmail = () => {
     }
 
     const handleIsModalVisible = () => {
-        if(isModalVisible)
-        {
+        if (isModalVisible) {
             setIsModalVisible(false)
             dispatch(updateErrorMessage(''))
         }
-        else
-        {
+        else {
             setIsModalVisible(true)
         }
     }
 
-    const handlePress = ( mail ) => {
+    const handlePress = (mail) => {
         let reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/
 
-        if(reg.test(mail) === true)
-        {
+        if (reg.test(mail) === true) {
             setIsValid(true)
             setEmail(mail)
             dispatch(CHANGE_LOADING(true))
             dispatch(updateErrorMessage(''))
-            dispatch(signUpEmail({email, password}))
-            .then(() => {
-                dispatch(CHANGE_LOADING(false))
-            })
+            dispatch(signUpEmail({ email, password }))
+                .then(() => {
+                    dispatch(CHANGE_LOADING(false))
+                })
         } else {
             setIsValid(false)
         }
     }
 
     useEffect(() => {
-        if(errorMessage)
-        {
+        if (errorMessage) {
             setIsModalVisible(true)
         }
     }, [errorMessage])
@@ -88,15 +84,9 @@ const SignupScreenEmail = () => {
             <Feather name="user" size={100} color="white" />
         </View>
         <View style={styles.tabContainer}>
-            <TouchableOpacity
-                style={{ ...styles.subTabContainer, borderBottomColor: 'grey', borderWidth: 1 }}
-                activeOpacity={0.5}
-                onPress={() => navigation.navigate('SignupPhone')}
-            >
-                <Text style={{color: 'white'}}>PHONE NUMBER</Text>
-            </TouchableOpacity>
+
             <View style={{ ...styles.subTabContainer, borderBottomColor: 'white', borderWidth: 2 }}>
-                <Text style={{color: 'white'}}>EMAIL ADDRESS</Text>
+                <Text style={{ color: 'white' }}>CORREO ELECTRÓNICO</Text>
             </View>
         </View>
         <EmailField
@@ -106,24 +96,24 @@ const SignupScreenEmail = () => {
         />
         {
             isValid
-            ?   null
-            :   <Text style={{color: 'red', alignSelf: 'flex-start', fontSize: 12, marginTop: -7, marginBottom: 10}}>
-                Please enter a valid email address.
+                ? null
+                : <Text style={{ color: 'red', alignSelf: 'flex-start', fontSize: 12, marginTop: -7, marginBottom: 10 }}>
+                    Porfavor ingrese un correo electrónico válido.
                 </Text>
         }
         <PasswordField
             onInputChange={updatedPass => handlePassword(updatedPass)}
-            placeHolderText={'Password'}
+            placeHolderText={'Contraseña'}
             value={password}
         />
         <PrimaryButton
-            text={'Next'}
+            text={'Registrar'}
             handlePress={() => {
                 email && password.length >= 6
-                ? handlePress(email)
-                : null
+                    ? handlePress(email)
+                    : null
             }}
-            allowed={ email && password.length >= 6 ? true : false }
+            allowed={email && password.length >= 6 ? true : false}
             useIndicator={isLoading}
         />
         <AlreadyLogIn />
@@ -159,4 +149,4 @@ const styles = StyleSheet.create({
     }
 })
 
-export default SignupScreenEmail ;
+export default SignupScreenEmail;

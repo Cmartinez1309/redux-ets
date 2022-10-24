@@ -39,42 +39,38 @@ const LoginEmailScreen = () => {
     }
 
     const handleIsModalVisible = () => {
-        if(isModalVisible)
-        {
+        if (isModalVisible) {
             setIsModalVisible(false)
             dispatch(updateErrorMessage(''))
         }
-        else
-        {
+        else {
             setIsModalVisible(true)
         }
     }
 
-    const handlePress = ( mail ) => {
+    const handlePress = (mail) => {
         let reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/
 
-        if(reg.test(mail) === true)
-        {
+        if (reg.test(mail) === true) {
             setIsValid(true)
             setEmail(mail)
             dispatch(CHANGE_LOADING(true))
             dispatch(updateErrorMessage(''))
-            dispatch(logInEmail({email, password}))
-            .then(() => {
-                dispatch(CHANGE_LOADING(false))
-            })
+            dispatch(logInEmail({ email, password }))
+                .then(() => {
+                    dispatch(CHANGE_LOADING(false))
+                })
         } else {
             setIsValid(false)
         }
     }
 
     useEffect(() => {
-        if(errorMessage)
-        {
+        if (errorMessage) {
             setIsModalVisible(true)
         }
     }, [errorMessage])
-    
+
     return <View style={styles.container}>
         <AlertModal
             title={'Error'}
@@ -86,7 +82,7 @@ const LoginEmailScreen = () => {
             source={require('../../../assets/logo/mainLogo.png')}
             style={styles.imageContainer}
         />
-        <View style={{height: 25}} />
+        <View style={{ height: 25 }} />
         <EmailField
             onInputChange={mail => handleEmailInput(mail)}
             value={email}
@@ -94,49 +90,26 @@ const LoginEmailScreen = () => {
         />
         {
             isValid
-            ?   null
-            :   <Text style={{color: 'red', alignSelf: 'flex-start', fontSize: 12, marginTop: -7, marginBottom: 10}}>
-                Please enter a valid email address.
+                ? null
+                : <Text style={{ color: 'red', alignSelf: 'flex-start', fontSize: 12, marginTop: -7, marginBottom: 10 }}>
+                    Por favor ingrese un correo electrónico válido.
                 </Text>
         }
         <PasswordField
             onInputChange={updatedPass => handlePassword(updatedPass)}
-            placeHolderText={'Password'}
+            placeHolderText={'Contraseña'}
             value={password}
         />
         <PrimaryButton
-            text={'Next'}
+            text={'Iniciar Sesión'}
             handlePress={() => {
                 email && password.length >= 6
-                ? handlePress(email)
-                : null
+                    ? handlePress(email)
+                    : null
             }}
-            allowed={ email && password.length >= 6 ? true : false }
+            allowed={email && password.length >= 6 ? true : false}
             useIndicator={isLoading}
         />
-        <SecondaryButton
-            text={'Login using Phone Number instead'}
-            handlePress={() => navigation.navigate('LoginPhone')}
-        />
-        <View style={{flexDirection: 'row', marginBottom: 15}}>
-            <Text style={{color: '#a2a2a2', fontSize: 12}} >Forgotten your login details?&nbsp;</Text>
-            <TouchableOpacity
-                activeOpacity={0.65}
-                onPress={() => {
-                    dispatch(updateErrorMessage('Sorry. Currently this feature is NOT supported.'))
-                }}
-            >
-                <Text style={{color: 'white', fontWeight: 'bold', fontSize: 12}} >Get help with logging in.</Text>
-            </TouchableOpacity>
-        </View>
-        
-        <View style={styles.ORContainer}>
-            <View style={styles.lineContainer} />
-            <Text style={{color: '#a2a2a2', fontWeight: 'bold'}}>&nbsp;&nbsp;OR&nbsp;&nbsp;</Text>
-            <View style={styles.lineContainer} />
-        </View>
-
-        <LoginWithFacebook />
 
         <NewSignUp />
     </View>
@@ -154,7 +127,7 @@ const styles = StyleSheet.create({
     imageContainer: {
         height: '5%',
         width: 'auto',
-        aspectRatio: 6042/1500
+        aspectRatio: 6042 / 1500
     },
     ORContainer: {
         justifyContent: 'center',
@@ -163,10 +136,10 @@ const styles = StyleSheet.create({
         width: '100%'
     },
     lineContainer: {
-        borderBottomColor: '#806e6c',
-        borderBottomWidth: 1,
+        borderTopColor: '#806e6c',
+        borderTopWidth: 1,
         flex: 1,
     }
 })
 
-export default LoginEmailScreen ;
+export default LoginEmailScreen;

@@ -7,15 +7,15 @@ const AlreadyLogIn = () => {
     const navigation = useNavigation()
 
     return <View style={styles.container}>
-        <View style={{flexDirection: 'row'}}>
-            <Text style={{color: '#888888', fontSize: 12}}>
-                Already have an account?&nbsp;
+        <View style={{ flexDirection: 'row' }}>
+            <Text style={{ color: '#888888', fontSize: 12 }}>
+                ¿Ya tienes una cuenta?&nbsp;
             </Text>
             <TouchableOpacity
                 activeOpacity={0.65}
                 onPress={() => navigation.navigate('LoginEmail')}
             >
-                <Text style={{color: '#dbe8f4', fontSize: 12}}>Log in.</Text>
+                <Text style={{ color: '#dbe8f4', fontSize: 12 }}>Iniciar Sesión.</Text>
             </TouchableOpacity>
         </View>
     </View>
@@ -26,7 +26,7 @@ const styles = StyleSheet.create({
         position: 'absolute',
         bottom: 0,
         width: '110%',
-        justifyContent :'center',
+        justifyContent: 'center',
         alignItems: 'center',
         marginHorizontal: 0,
         paddingVertical: 15,
@@ -35,4 +35,4 @@ const styles = StyleSheet.create({
     }
 })
 
-export default AlreadyLogIn ;
+export default AlreadyLogIn;

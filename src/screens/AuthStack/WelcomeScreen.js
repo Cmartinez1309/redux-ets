@@ -18,8 +18,8 @@ const WelcomeScreen = () => {
             source={require('../../../assets/logo/mainLogo.png')}
             style={styles.imageContainer}
         />
-        <View style={{height: 70}} />
-        <PrimaryButton text={'Create New Account'} handlePress={() => navigation.navigate('SignupPhone')} allowed={true} />
+        <View style={{ height: 70 }} />
+        <PrimaryButton text={'Registrar'} handlePress={() => navigation.navigate('SignupEmail')} allowed={true} />
         <SecondaryButton handlePress={() => navigation.navigate('LoginEmail')} />
     </View>
 }
@@ -36,8 +36,8 @@ const styles = StyleSheet.create({
     imageContainer: {
         height: '5%',
         width: 'auto',
-        aspectRatio: 6042/1500
+        aspectRatio: 6042 / 1500
     }
 })
 
-export default WelcomeScreen ;
+export default WelcomeScreen;

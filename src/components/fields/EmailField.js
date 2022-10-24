@@ -2,15 +2,15 @@ import React from 'react'
 import { View, StyleSheet, TextInput } from 'react-native'
 
 const EmailField = ({ onInputChange, value, validity }) => {
-    return <View style={{...styles.container, borderColor: validity ? null : 'red', borderWidth: validity ? null : 2}}>
+    return <View style={{ ...styles.container, borderColor: validity ? null : 'red', borderWidth: validity ? null : 2 }}>
         <TextInput
             style={styles.inputContainer}
-            placeholder='Email address'
+            placeholder='Correo Electrónico'
             value={value}
             placeholderTextColor={'#a2a2a2'}
             color={'#a2a2a2'}
             keyboardType={'email-address'}
-            onChangeText={t => {onInputChange(t)}}
+            onChangeText={t => { onInputChange(t) }}
         />
     </View>
 }
@@ -32,4 +32,4 @@ const styles = StyleSheet.create({
     }
 })
 
-export default EmailField ;
+export default EmailField;

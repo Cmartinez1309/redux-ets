@@ -17,58 +17,52 @@ const initialState = {
     }
 }
 
-export const signUpEmail = createAsyncThunk('firebase/signUpEmail', async({email, password, capRef}) => {
-    try
-    {
+export const signUpEmail = createAsyncThunk('firebase/signUpEmail', async ({ email, password, capRef }) => {
+    try {
         const auth = firebaseAuth.getAuth()
         const userCredential = await firebaseAuth.createUserWithEmailAndPassword(auth, email, password)
-        return {user: userCredential.user}
+        return { user: userCredential.user }
     }
-    catch(err)
-    {
-        return {errorCode: err.code}
+    catch (err) {
+        return { errorCode: err.code }
     }
 })
 
-export const signUpPhoneNumberVerify = createAsyncThunk('firebase/signUpPhoneNumberVerify', async({verificationId, otp}) => {
-    try
-    {
+export const signUpPhoneNumberVerify = createAsyncThunk('firebase/signUpPhoneNumberVerify', async ({ verificationId, otp }) => {
+    try {
         const auth = firebaseAuth.getAuth()
         const userCredential = PhoneAuthProvider.credential(verificationId, otp)
         const response = await signInWithCredential(auth, userCredential)
         return response
     } catch (err) {
-        return {errorCode: err.code}
+        return { errorCode: err.code }
     }
 })
 
-export const logInPhoneNumberVerify = createAsyncThunk('firebase/logInśPhoneNumberVerify', async({verificationId, otp}) => {
-    try
-    {
+export const logInPhoneNumberVerify = createAsyncThunk('firebase/logInśPhoneNumberVerify', async ({ verificationId, otp }) => {
+    try {
         const auth = firebaseAuth.getAuth()
         const userCredential = PhoneAuthProvider.credential(verificationId, otp)
         const response = await signInWithCredential(auth, userCredential)
         return response
     } catch (err) {
-        return {errorCode: err.code}
+        return { errorCode: err.code }
     }
 })
 
-export const logInEmail = createAsyncThunk('firebase/logInEmail', async({email, password}) => {
-    try
-    {
+export const logInEmail = createAsyncThunk('firebase/logInEmail', async ({ email, password }) => {
+    try {
         console.log('--> logging in using email & password');
         const auth = firebaseAuth.getAuth()
         const userCredential = await firebaseAuth.signInWithEmailAndPassword(auth, email, password)
-        return {user: userCredential.user}
+        return { user: userCredential.user }
     }
-    catch(err)
-    {
-        return {errorCode: err.code}
+    catch (err) {
+        return { errorCode: err.code }
     }
 })
 
-export const signOutUser = createAsyncThunk('firebase/signOutUser', async() => {
+export const signOutUser = createAsyncThunk('firebase/signOutUser', async () => {
     const auth = firebaseAuth.getAuth()
     await firebaseAuth.signOut(auth)
 })
@@ -89,17 +83,14 @@ const firebaseSlice = createSlice({
             .addCase(signUpEmail.fulfilled, (state, action) => {
                 console.log(' --> signUpEmail fulfilled');
                 console.log(action);
-                if(action.payload.errorCode)
-                {
-                    switch(action.payload.errorCode)
-                    {
+                if (action.payload.errorCode) {
+                    switch (action.payload.errorCode) {
                         case 'auth/email-already-in-use':
-                            state.error.errorBody = 'Email already in use. Please use a different email address'
-                            break ;
+                            state.error.errorBody = 'Correo electrónico ya en uso. Por favor use un correo electrónico differente'
+                            break;
                     }
                 }
-                if(action.payload.user)
-                {
+                if (action.payload.user) {
                     state.user = action.payload.user
                 }
             })
@@ -112,10 +103,8 @@ const firebaseSlice = createSlice({
             .addCase(signUpPhoneNumberVerify.fulfilled, (state, action) => {
                 console.log(' --> singupPhoneNumberVerify fulfilled.');
                 console.log(action.payload);
-                if(action.payload.errorCode)
-                {
-                    switch(action.payload.errorCode)
-                    {
+                if (action.payload.errorCode) {
+                    switch (action.payload.errorCode) {
                         case 'auth/invalid-verification-code':
                             state.error.errorBody = 'Incorrect verification code entered.'
                             break
@@ -124,14 +113,12 @@ const firebaseSlice = createSlice({
                             break
                     }
                 }
-                if(action.payload._tokenResponse)
-                {
-                    switch(action.payload._tokenResponse.isNewUser)
-                    {
+                if (action.payload._tokenResponse) {
+                    switch (action.payload._tokenResponse.isNewUser) {
                         case true: state.user = action.payload.user
-                        break ;
+                            break;
                         case false: state.error.errorBody = 'Phone number already is use. Please use a different phone number.'
-                                     break
+                            break
                     }
                 }
             })
@@ -141,24 +128,21 @@ const firebaseSlice = createSlice({
             })
             .addCase(logInEmail.fulfilled, (state, action) => {
                 console.log(' --> logInEmail fulfilled');
-                if(action.payload.errorCode)
-                {
+                if (action.payload.errorCode) {
                     console.log(action.payload.errorCode);
-                    switch(action.payload.errorCode)
-                    {
+                    switch (action.payload.errorCode) {
                         case 'auth/wrong-password':
-                            state.error.errorBody = 'Incorrect Password. Please try again.'
-                            break ;
+                            state.error.errorBody = 'Contraseña incorrecta. Por favor intente de nuevo.'
+                            break;
                         case 'auth/user-not-found':
-                            state.error.errorBody = 'Email address is not registered with us. Please try again with a different email address.'
-                            break ;
+                            state.error.errorBody = 'Correo electronico no esta registrado. Por favor intente con un correo electrónico diferente'
+                            break;
                         case 'auth/user-disabled':
-                            state.error.errorBody = 'Your account is temporarily disabled. Please try again after some time or contact support.'
-                            break ;
-                        }
+                            state.error.errorBody = 'Su cuenta esta temporalmente deshabilitada. Intente de nuevo despues de unos minutos.'
+                            break;
+                    }
                 }
-                if(action.payload.user)
-                {
+                if (action.payload.user) {
                     console.log(' * Signed in successful');
                     state.user = action.payload.user
                 }
@@ -166,10 +150,8 @@ const firebaseSlice = createSlice({
             .addCase(logInPhoneNumberVerify.fulfilled, (state, action) => {
                 console.log(' --> logInPhoneNumberVerify fulfilled.');
                 console.log(action.payload);
-                if(action.payload.errorCode)
-                {
-                    switch(action.payload.errorCode)
-                    {
+                if (action.payload.errorCode) {
+                    switch (action.payload.errorCode) {
                         case 'auth/invalid-verification-code':
                             state.error.errorBody = 'Incorrect verification code entered.'
                             break
@@ -178,14 +160,12 @@ const firebaseSlice = createSlice({
                             break
                     }
                 }
-                if(action.payload._tokenResponse)
-                {
+                if (action.payload._tokenResponse) {
                     console.log(action.payload._tokenResponse);
-                    switch(action.payload._tokenResponse.isNewUser)
-                    {
+                    switch (action.payload._tokenResponse.isNewUser) {
                         case true:
                             state.error.errorBody = 'This phone number is not registered, but is now signed up with our instagram clone servers. Please login again to continue.'
-                            break ;
+                            break;
                         case false:
                             state.user = action.payload.user
                             break

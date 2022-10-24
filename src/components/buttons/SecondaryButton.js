@@ -3,11 +3,11 @@ import { Text, StyleSheet, TouchableOpacity } from 'react-native'
 
 const SecondaryButton = ({ handlePress, text }) => {
     return <TouchableOpacity
-                style={styles.container}
-                activeOpacity={0.65}
-                onPress={handlePress}
-            >
-        <Text style={{color: '#0195f7'}}>{text ? text : 'Login'}</Text>
+        style={styles.container}
+        activeOpacity={0.65}
+        onPress={handlePress}
+    >
+        <Text style={{ color: '#0195f7' }}>{text ? text : 'Iniciar Sesión'}</Text>
     </TouchableOpacity>
 }
 
@@ -22,4 +22,4 @@ const styles = StyleSheet.create({
     }
 })
 
-export default SecondaryButton ;
+export default SecondaryButton;

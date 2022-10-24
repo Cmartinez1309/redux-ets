@@ -15,7 +15,7 @@ const Stack = createNativeStackNavigator()
 export const AppStack = () => {
     return (
         <Stack.Navigator>
-            <Stack.Screen name="Home" component={HomeScreen} options={{headerShown: false, animation: 'none'}} />
+            <Stack.Screen name="Home" component={HomeScreen} options={{ headerShown: false, animation: 'none' }} />
         </Stack.Navigator>
     )
 }
@@ -23,13 +23,13 @@ export const AppStack = () => {
 export const AuthStack = () => {
     return (
         <Stack.Navigator>
-            <Stack.Screen name="Welcome" component={WelcomeScreen} options={{headerShown: false, animation: 'none'}} />
-            <Stack.Screen name="OTPVerification" component={OTPVerificationScreen} options={{headerShown: false, animation: 'none'}} />
-            <Stack.Screen name="LoginEmail" component={LoginEmailScreen} options={{headerShown: false, animation: 'none'}} />
-            <Stack.Screen name="LoginPhone" component={LoginPhoneScreen} options={{headerShown: false, animation: 'none'}} />
-            <Stack.Screen name="SignupPhone" component={SignupScreenPhone} options={{headerShown: false, animation: 'none'}} />
-            <Stack.Screen name="SignupEmail" component={SignupScreenEmail} options={{headerShown: false, animation: 'none'}} />
-            <Stack.Screen name="EmailConfirmation" component={EmailConfirmationScreen} options={{headerShown: false, animation: 'none'}} />
+            <Stack.Screen name="Welcome" component={WelcomeScreen} options={{ headerShown: false, animation: 'none' }} />
+            <Stack.Screen name="OTPVerification" component={OTPVerificationScreen} options={{ headerShown: false, animation: 'none' }} />
+            <Stack.Screen name="LoginEmail" component={LoginEmailScreen} options={{ headerShown: false, animation: 'none' }} />
+            <Stack.Screen name="LoginPhone" component={LoginPhoneScreen} options={{ headerShown: false, animation: 'none' }} />
+            <Stack.Screen name="SignupPhone" component={SignupScreenPhone} options={{ headerShown: false, animation: 'none' }} />
+            <Stack.Screen name="SignupEmail" component={SignupScreenEmail} options={{ headerShown: false, animation: 'none' }} />
+            <Stack.Screen name="EmailConfirmation" component={EmailConfirmationScreen} options={{ headerShown: false, animation: 'none' }} />
         </Stack.Navigator>
     )
 }
