@@ -11,13 +11,13 @@ const WelcomeScreen = () => {
     <View style={styles.container}>
       <StatusBar barStyle='light-content' hidden={false} translucent={true} />
       <Image
-        source={require('../../../assets/logo/mainLogo.png')}
+        source={require('../../../assets/logo/logo.png')}
         style={styles.imageContainer}
       />
       <View style={{ height: 70 }} />
       <PrimaryButton
         text={'Registrar'}
-        handlePress={() => navigation.navigate('SignupPhone')}
+        handlePress={() => navigation.navigate('SignupEmail')}
         allowed={true}
       />
       <SecondaryButton handlePress={() => navigation.navigate('LoginEmail')} />
@@ -35,9 +35,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
   },
   imageContainer: {
-    height: '5%',
-    width: 'auto',
-    aspectRatio: 6042 / 1500,
+    height: '20%',
+    width: '55%',
   },
 });
 

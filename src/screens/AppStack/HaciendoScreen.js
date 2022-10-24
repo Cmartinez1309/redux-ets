@@ -100,6 +100,7 @@ const HaciendoScreen = () => {
           onPress={() => navigation.navigate('Home')}
         >
           <Text style={{ color: 'white' }}>Lista</Text>
+          <Text style={{ color: 'white' }}>0</Text>
         </TouchableOpacity>
         <View
           style={{
@@ -109,6 +110,7 @@ const HaciendoScreen = () => {
           }}
         >
           <Text style={{ color: 'white' }}>Haciendo</Text>
+          <Text style={{ color: 'white' }}>0</Text>
         </View>
         <TouchableOpacity
           style={{
@@ -120,6 +122,7 @@ const HaciendoScreen = () => {
           onPress={() => navigation.navigate('Hecho')}
         >
           <Text style={{ color: 'white' }}>Hecho</Text>
+          <Text style={{ color: 'white' }}>0</Text>
         </TouchableOpacity>
       </View>
 
