@@ -24,6 +24,7 @@ import {
   child,
   get,
   push,
+  update,
   set,
   onValue,
   orderByChild,
@@ -49,6 +50,9 @@ const HomeScreen = () => {
   const [isListaHaciendo, setListaHaciendo] = useState([]);
   const [isListaHecho, setListaHecho] = useState([]);
   const [isCurrentUser, setIsCurrentUser] = useState('');
+
+  const isListaHaciendoo = isLista.filter((lista) => !lista.read);
+  const isListaHechoo = isLista.filter((lista) => lista.read);
 
   const dispatch = useDispatch();
   const isLoading = useSelector((state) => state.loading.value);
@@ -83,25 +87,6 @@ const HomeScreen = () => {
     try {
       const db = getDatabase();
 
-      // const mostViewedPosts = query(
-      //   ref(db, `listas/${isCurrentUser}/${key}`),
-      //   orderByValue('book'),
-      //   equalTo(lista)
-      // );
-      // const snapshot = await firebase
-      //   .database()
-      //   .ref('listas')
-      //   .child(isCurrentUser)
-      //   .orderByChild('book')
-      //   .equalTo(lista)
-      //   .once('value');
-
-      // if (snapshot.exists()) {
-      //   console.log('unable to add as book already exists');
-      // } else {
-      //   console.log('fk');
-      // }
-
       const key = push(child(ref(db), 'listas/' + isCurrentUser)).key;
 
       console.log(key);
@@ -111,41 +96,46 @@ const HomeScreen = () => {
         read: false,
       });
 
-      // const response = await firebase
-      //   .database()
-      //   .ref('listas')
-      //   .child(isCurrentUser.uid)
-      //   .child(key)
-      //   .set({ titulo: lista, hecho: false });
-
-      // const db = getDatabase();
-      // set(ref(db, 'users/' + userCredential.user.uid), {
-      //   email: userCredential.user.email,
-      //   uid: userCredential.user.uid,
-      // });
-
       setIsAddNewListVisible(false);
     } catch (error) {
       console.log(error);
     }
 
-    setLista((isLista) => [...isLista, lista]);
-    setListaHaciendo((isListaHaciendo) => [...isListaHaciendo, lista]);
-    setIsTotalCount(isTotalCount + 1);
-    setIsHaciendoCount(isHaciendoCount + 1);
-    console.log(isLista);
+    // setLista((isLista) => [...isLista, lista]);
+    // setListaHaciendo((isListaHaciendo) => [...isListaHaciendo, lista]);
+    // setIsTotalCount(isTotalCount + 1);
+    // setIsHaciendoCount(isHaciendoCount + 1);
+    // console.log(isLista);
   };
 
-  const marcarComoLeido = (listaSeleccionada, index) => {
-    let nuevaLista = isLista.filter((lista) => lista !== listaSeleccionada);
-    let nuevaListaHaciendo = isListaHaciendo.filter(
-      (lista) => lista !== listaSeleccionada
-    );
-    setLista(nuevaLista);
-    setListaHaciendo(nuevaListaHaciendo);
-    setListaHecho((isListaHecho) => [...isListaHecho, listaSeleccionada]);
-    // setIsHaciendoCount(isHaciendoCount - 1);
-    // setIsHechoCount(isHechoCount + 1);
+  const marcarComoLeido = async (listaSeleccionada, index) => {
+    try {
+      const db = getDatabase();
+
+      update(ref(db, 'listas/' + isCurrentUser + '/' + listaSeleccionada.key), {
+        read: true,
+      });
+
+      let nuevaLista = isLista.map((lista) => {
+        if (lista.lista == listaSeleccionada.lista) {
+          return { ...lista, read: true };
+        }
+        return lista;
+      });
+      let nuevaListaHaciendo = isListaHaciendo.filter(
+        (lista) => lista.lista !== listaSeleccionada.lista
+      );
+      setLista(nuevaLista);
+      setListaHaciendo(nuevaListaHaciendo);
+      setListaHecho((isListaHecho) => [
+        ...isListaHecho,
+        { lista: listaSeleccionada.lista, read: true },
+      ]);
+      // setIsHaciendoCount(isHaciendoCount - 1);
+      // setIsHechoCount(isHechoCount + 1);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   useEffect(() => {
@@ -166,8 +156,6 @@ const HomeScreen = () => {
 
     const db = getDatabase();
 
-    // const listas = push(child(ref(db), 'listas/' + isCurrentUser));
-
     const dbRef = ref(getDatabase());
     let returnArr = [];
     get(child(dbRef, `listas/${isCurrentUser}`))
@@ -177,86 +165,63 @@ const HomeScreen = () => {
           item.key = childSnapshot.key;
           returnArr.push(item);
         });
+
         setLista(returnArr);
-        // if (snapshot.exists()) {
-        //   let item = snapshot.val();
-        //   item.key = snapshot.key;
-        //   returnArr.push(item);
-        //   console.log(snapshot.val());
-        //   console.log(snapshot.key);
-        //   // setLista(returnArr);
-        // } else {
-        //   console.log('No data available');
-        // }
       })
       .catch((error) => {
         console.error(error);
       });
-
-    // const listasArray = snapshotToArray(listas);
-
-    // setLista(listasArray);
-
-    // const dbRef = ref(getDatabase());
-    // get(child(dbRef, `listas/${isCurrentUser}`))
-    //   .then((snapshot) => {
-    //     if (snapshot.exists()) {
-    //       console.log(snapshot.val());
-    //       returnArr.push(snapshot.val());
-    //       console.log(isLista.book);
-    //     } else {
-    //       console.log('No data available');
-    //     }
-    //   })
-    //   .catch((error) => {
-    //     console.error(error);
-    //   });
-
-    // firebase.auth().onAuthStateChanged((user) => {
-    //   if (user) {
-    //     // User logged in already or has just logged in.
-    //     console.log(user.uid);
-    //   } else {
-    //     // User not logged in or has just logged out.
-    //   }
-    // });
-    // async () => {
-    //   const userCredential = await firebaseAuth.getCurrentUser();
-    //   setIsCurrentUser(userCredential.user.uid);
-    // };
-    // const userCredential = firebaseAuth.getCurrentUser();
-    // setIsCurrentUser(userCredential.user.uid);
-    // console.log(isCurrentUser);
-    // console.log(uid);
   });
 
   const renderLista = (item, index) => (
     <View
       style={{
-        height: 35,
+        minHeight: 70,
         flexDirection: 'row',
         justifyContent: 'space-between',
-        width: '79%',
+        alignContent: 'center',
+        width: 325,
       }}
     >
+      <View style={{ height: 70, width: 70 }}>
+        <Image
+          source={require('../../../assets/icon.png')}
+          style={{ flex: 1, height: null, width: null, borderRadius: 35 }}
+        />
+      </View>
+
       <View
         style={{
+          borderWidth: 1,
+          borderColor: 'white',
           justifyContent: 'center',
+          width: 170,
         }}
       >
         <Text style={{ color: 'white' }}> {item.lista} </Text>
       </View>
-      <TouchableOpacity
-        style={{
-          backgroundColor: '#a5deba',
-          alignContent: 'center',
-          justifyContent: 'center',
-          width: 100,
-        }}
-        onPress={() => marcarComoLeido(item, index)}
-      >
-        <Text style={{ textAlign: 'center' }}>Mark as read</Text>
-      </TouchableOpacity>
+      {item.read ? (
+        <View
+          style={{
+            justifyContent: 'center',
+            alignContent: 'center',
+          }}
+        >
+          <Ionicons name='ios-checkmark' color='white' size={15} />
+        </View>
+      ) : (
+        <TouchableOpacity
+          style={{
+            backgroundColor: '#a5deba',
+            alignContent: 'center',
+            justifyContent: 'center',
+            width: 80,
+          }}
+          onPress={() => marcarComoLeido(item, index)}
+        >
+          <Text style={{ textAlign: 'center' }}>Mark as read</Text>
+        </TouchableOpacity>
+      )}
     </View>
   );
 
@@ -293,13 +258,17 @@ const HomeScreen = () => {
             }}
             onPress={hideAddNewList}
           >
-            <View style={{ justifyContent: 'center', alignItems: 'center' }}>
+            <View
+              style={{
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}
+            >
               <Ionicons name='ios-close' color='white' size={15} />
             </View>
           </TouchableOpacity>
         </View>
       ) : null}
-
       <FlatList
         data={isLista}
         renderItem={({ item }, index) => renderLista(item, index)}
@@ -313,11 +282,15 @@ const HomeScreen = () => {
         }
       />
 
-      <TouchableOpacity onPress={showAddNewList}>
-        <View>
-          <Text style={{ color: 'white', fontSize: 30 }}>+</Text>
-        </View>
-      </TouchableOpacity>
+      {/* Boton de agregar */}
+      <View>
+        <Text
+          onPress={showAddNewList}
+          style={{ color: 'white', fontSize: 30, bottom: 270 }}
+        >
+          +
+        </Text>
+      </View>
       <View style={styles.tabContainer}>
         <View
           style={{
@@ -339,7 +312,7 @@ const HomeScreen = () => {
           onPress={() => navigation.navigate('Haciendo')}
         >
           <Text style={{ color: 'white' }}>Haciendo</Text>
-          <Text style={{ color: 'white' }}>{isListaHaciendo.length}</Text>
+          <Text style={{ color: 'white' }}>{isListaHaciendoo.length}</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={{
@@ -351,10 +324,9 @@ const HomeScreen = () => {
           onPress={() => navigation.navigate('Hecho')}
         >
           <Text style={{ color: 'white' }}>Hecho</Text>
-          <Text style={{ color: 'white' }}>{isListaHecho.length}</Text>
+          <Text style={{ color: 'white' }}>{isListaHechoo.length}</Text>
         </TouchableOpacity>
       </View>
-
       <PrimaryButton
         text={'Log Out'}
         allowed={true}
