@@ -10,7 +10,10 @@ import {
   Linking,
   TextInput,
   FlatList,
+  SafeAreaView,
+  Alert,
 } from 'react-native';
+import * as ImagePicker from 'expo-image-picker';
 import { useDispatch, useSelector } from 'react-redux';
 import { signOutUser } from '../../redux/features/firebase/firebaseSlice';
 import PrimaryButton from '../../components/buttons/PrimaryButton';
@@ -37,6 +40,7 @@ import * as firebase from 'firebase/app';
 import firebaseAuth from '../../firebase/firebase';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import { snapshotToArray } from '../../firebase/helpers';
+import * as Animatable from 'react-native-animatable';
 
 const HomeScreen = () => {
   const [message, setMessage] = useState('');
@@ -62,6 +66,8 @@ const HomeScreen = () => {
     (state) => state.firebaseStore.error.errorBody
   );
 
+  let textInputRef = null;
+
   const handleSignOut = () => {
     console.log('cerrando sesión...');
     dispatch(CHANGE_LOADING(true));
@@ -83,7 +89,20 @@ const HomeScreen = () => {
     setIsAddNewListVisible(false);
   };
 
+  // const UploadScreen = () => {
+  //   const [image, setImage] = useState(null);
+  //   const [uploading, setUploading] = useState(false);
+
+  //   const pickImage = async() => {
+  //     let result = await ImagePicker.launchImageLibraryAsync({
+  //       mediaTypes: ImagePicker.launchImageLibraryAsync
+  //     })
+  //   }
+  // }
+
   const addNewList = async (lista) => {
+    setIsAddNewList('');
+    textInputRef.setNativeProps({ text: '' });
     try {
       const db = getDatabase();
 
@@ -205,6 +224,7 @@ const HomeScreen = () => {
           style={{
             justifyContent: 'center',
             alignContent: 'center',
+            width: 80,
           }}
         >
           <Ionicons name='ios-checkmark' color='white' size={15} />
@@ -228,7 +248,28 @@ const HomeScreen = () => {
   return (
     <View style={styles.container}>
       <StatusBar barStyle='light-content' hidden={false} translucent={true} />
-      {isAddNewListVisible ? (
+      <View
+        style={{
+          backgroundColor: '#16181c',
+          height: 40,
+          width: 250,
+          borderRadius: 25,
+          marginVertical: 10,
+          justifyContent: 'center',
+        }}
+      >
+        <TextInput
+          onChangeText={(text) => setIsAddNewList(text)}
+          placeholder='Insertar titulo de lista'
+          placeholderTextColor='#dbdbdb'
+          color='white'
+          style={{ backgroundColor: 'transparent', paddingLeft: 15 }}
+          ref={(component) => {
+            textInputRef = component;
+          }}
+        />
+      </View>
+      {/* {isAddNewListVisible ? (
         <View style={{ flexDirection: 'row', height: 30 }}>
           <TextInput
             onChangeText={(text) => setIsAddNewList(text)}
@@ -268,7 +309,7 @@ const HomeScreen = () => {
             </View>
           </TouchableOpacity>
         </View>
-      ) : null}
+      ) : null} */}
       <FlatList
         data={isLista}
         renderItem={({ item }, index) => renderLista(item, index)}
@@ -283,14 +324,31 @@ const HomeScreen = () => {
       />
 
       {/* Boton de agregar */}
-      <View>
-        <Text
-          onPress={showAddNewList}
-          style={{ color: 'white', fontSize: 30, bottom: 270 }}
+      {isAddNewList.length > 0 ? (
+        <Animatable.View
+          animation={isAddNewList.length > 0 ? 'slideInRight' : 'slideOutRight'}
         >
-          +
-        </Text>
-      </View>
+          <View style={{ justifyContent: 'center' }}>
+            <Text
+              onPress={() => addNewList(isAddNewList)}
+              style={{
+                textAlign: 'center',
+                color: '#000',
+                fontSize: 30,
+                bottom: 270,
+                width: 50,
+                height: 50,
+                backgroundColor: '#1DA1F2',
+                borderRadius: 50,
+                paddingTop: 3,
+              }}
+            >
+              +
+            </Text>
+          </View>
+        </Animatable.View>
+      ) : null}
+
       <View style={styles.tabContainer}>
         <View
           style={{
