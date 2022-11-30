@@ -93,6 +93,18 @@ const LoginEmailScreen = () => {
         style={styles.imageContainer}
       />
       <View style={{ height: 25 }} />
+      <View
+        style={{
+          width: '100%',
+          borderBottomColor: 'white',
+          borderWidth: 2,
+          marginBottom: 8,
+        }}
+      >
+        <Text style={{ color: 'white', textAlign: 'center', marginBottom: 10 }}>
+          Inicio de sesión
+        </Text>
+      </View>
       <EmailField
         onInputChange={(mail) => handleEmailInput(mail)}
         value={email}

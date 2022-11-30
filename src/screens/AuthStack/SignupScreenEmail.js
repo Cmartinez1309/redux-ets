@@ -88,7 +88,7 @@ const SignupScreenEmail = () => {
       />
       <StatusBar barStyle='light-content' hidden={false} translucent={true} />
       <View style={styles.userIconContainer}>
-        <Feather name='user' size={100} color='white' />
+        <Feather name='user' size={55} color='white' />
       </View>
       <View style={styles.tabContainer}>
         <View
@@ -98,7 +98,7 @@ const SignupScreenEmail = () => {
             borderWidth: 2,
           }}
         >
-          <Text style={{ color: 'white' }}>CORREO ELECTRÓNICO</Text>
+          <Text style={{ color: 'white' }}>Registro</Text>
         </View>
       </View>
       <EmailField

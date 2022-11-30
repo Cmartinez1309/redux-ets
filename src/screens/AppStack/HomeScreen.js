@@ -173,6 +173,26 @@ const HomeScreen = () => {
       }
     });
 
+    // const db = getDatabase();
+
+    // const dbRef = ref(getDatabase());
+    // let returnArr = [];
+    // get(child(dbRef, `listas/${isCurrentUser}`))
+    //   .then((snapshot) => {
+    //     snapshot.forEach((childSnapshot) => {
+    //       let item = childSnapshot.val();
+    //       item.key = childSnapshot.key;
+    //       returnArr.push(item);
+    //     });
+
+    //     setLista(returnArr);
+    //   })
+    //   .catch((error) => {
+    //     console.error(error);
+    //   });
+  });
+
+  useEffect(() => {
     const db = getDatabase();
 
     const dbRef = ref(getDatabase());
@@ -190,7 +210,7 @@ const HomeScreen = () => {
       .catch((error) => {
         console.error(error);
       });
-  });
+  }, [isLista]);
 
   const renderLista = (item, index) => (
     <View
@@ -202,12 +222,12 @@ const HomeScreen = () => {
         width: 325,
       }}
     >
-      <View style={{ height: 70, width: 70 }}>
+      {/* <View style={{ height: 70, width: 70 }}>
         <Image
           source={require('../../../assets/icon.png')}
           style={{ flex: 1, height: null, width: null, borderRadius: 35 }}
         />
-      </View>
+      </View> */}
 
       <View
         style={{
@@ -327,6 +347,12 @@ const HomeScreen = () => {
       {isAddNewList.length > 0 ? (
         <Animatable.View
           animation={isAddNewList.length > 0 ? 'slideInRight' : 'slideOutRight'}
+          // style={
+          //   {
+          //     // borderColor: 'white',
+          //     // borderWidth: 1,
+          //   }
+          // }
         >
           <View style={{ justifyContent: 'center' }}>
             <Text
@@ -335,7 +361,7 @@ const HomeScreen = () => {
                 textAlign: 'center',
                 color: '#000',
                 fontSize: 30,
-                bottom: 270,
+                bottom: 80,
                 width: 50,
                 height: 50,
                 backgroundColor: '#1DA1F2',
