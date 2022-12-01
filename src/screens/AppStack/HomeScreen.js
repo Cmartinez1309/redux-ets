@@ -89,6 +89,41 @@ const HomeScreen = () => {
     setIsAddNewListVisible(false);
   };
 
+  useEffect(() => {
+    const auth = getAuth();
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        // User is signed in, see docs for a list of available properties
+        // https://firebase.google.com/docs/reference/js/firebase.User
+        const uid = user.uid;
+        setIsCurrentUser(uid);
+
+        // ...
+      } else {
+        // User is signed out
+        // ...
+      }
+    });
+
+    const db = getDatabase();
+
+    const dbRef = ref(getDatabase());
+    let returnArr = [];
+    get(child(dbRef, `listas/${isCurrentUser}`))
+      .then((snapshot) => {
+        snapshot.forEach((childSnapshot) => {
+          let item = childSnapshot.val();
+          item.key = childSnapshot.key;
+          returnArr.push(item);
+        });
+
+        setLista(returnArr);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  }, [navigation]);
+
   // const UploadScreen = () => {
   //   const [image, setImage] = useState(null);
   //   const [uploading, setUploading] = useState(false);
@@ -125,6 +160,7 @@ const HomeScreen = () => {
     // setIsTotalCount(isTotalCount + 1);
     // setIsHaciendoCount(isHaciendoCount + 1);
     // console.log(isLista);
+    reRender();
   };
 
   const marcarComoLeido = async (listaSeleccionada, index) => {
@@ -155,44 +191,43 @@ const HomeScreen = () => {
     } catch (error) {
       console.log(error);
     }
+
+    reRender();
   };
 
-  useEffect(() => {
-    const auth = getAuth();
-    onAuthStateChanged(auth, (user) => {
-      if (user) {
-        // User is signed in, see docs for a list of available properties
-        // https://firebase.google.com/docs/reference/js/firebase.User
-        const uid = user.uid;
-        setIsCurrentUser(uid);
+  const marcarNoComoLeido = async (listaSeleccionada, index) => {
+    try {
+      const db = getDatabase();
 
-        // ...
-      } else {
-        // User is signed out
-        // ...
-      }
-    });
+      update(ref(db, 'listas/' + isCurrentUser + '/' + listaSeleccionada.key), {
+        read: false,
+      });
 
-    // const db = getDatabase();
+      let nuevaLista = isLista.map((lista) => {
+        if (lista.lista == listaSeleccionada.lista) {
+          return { ...lista, read: false };
+        }
+        return lista;
+      });
+      let nuevaListaHaciendo = isListaHaciendo.filter(
+        (lista) => lista.lista !== listaSeleccionada.lista
+      );
+      setLista(nuevaLista);
+      setListaHaciendo(nuevaListaHaciendo);
+      setListaHecho((isListaHecho) => [
+        ...isListaHecho,
+        { lista: listaSeleccionada.lista, read: false },
+      ]);
+      // setIsHaciendoCount(isHaciendoCount - 1);
+      // setIsHechoCount(isHechoCount + 1);
+    } catch (error) {
+      console.log(error);
+    }
 
-    // const dbRef = ref(getDatabase());
-    // let returnArr = [];
-    // get(child(dbRef, `listas/${isCurrentUser}`))
-    //   .then((snapshot) => {
-    //     snapshot.forEach((childSnapshot) => {
-    //       let item = childSnapshot.val();
-    //       item.key = childSnapshot.key;
-    //       returnArr.push(item);
-    //     });
+    reRender();
+  };
 
-    //     setLista(returnArr);
-    //   })
-    //   .catch((error) => {
-    //     console.error(error);
-    //   });
-  });
-
-  useEffect(() => {
+  const reRender = () => {
     const db = getDatabase();
 
     const dbRef = ref(getDatabase());
@@ -210,16 +245,19 @@ const HomeScreen = () => {
       .catch((error) => {
         console.error(error);
       });
-  }, [isLista]);
+  };
 
   const renderLista = (item, index) => (
     <View
       style={{
-        minHeight: 70,
+        minHeight: 60,
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignContent: 'center',
         width: 325,
+        backgroundColor: '#0B0B0B',
+        borderBottomWidth: 4,
+        borderColor: 'black',
       }}
     >
       {/* <View style={{ height: 70, width: 70 }}>
@@ -231,8 +269,6 @@ const HomeScreen = () => {
 
       <View
         style={{
-          borderWidth: 1,
-          borderColor: 'white',
           justifyContent: 'center',
           width: 170,
         }}
@@ -252,14 +288,16 @@ const HomeScreen = () => {
       ) : (
         <TouchableOpacity
           style={{
-            backgroundColor: '#a5deba',
+            backgroundColor: '#000',
             alignContent: 'center',
             justifyContent: 'center',
             width: 80,
           }}
           onPress={() => marcarComoLeido(item, index)}
         >
-          <Text style={{ textAlign: 'center' }}>Mark as read</Text>
+          <Text style={{ textAlign: 'center', color: 'white' }}>
+            Mark as read
+          </Text>
         </TouchableOpacity>
       )}
     </View>
@@ -331,12 +369,14 @@ const HomeScreen = () => {
         </View>
       ) : null} */}
       <FlatList
+        style={{}}
+        contentContainerStyle={{ borderRadius: 20, overflow: 'hidden' }}
         data={isLista}
         renderItem={({ item }, index) => renderLista(item, index)}
         keyExtractor={(item, index) => index.toString()}
         ListEmptyComponent={
           <View style={{ marginTop: 50, alignItems: 'center' }}>
-            <Text style={{ color: 'white' }}>
+            <Text style={{ color: 'white', paddingBottom: 10 }}>
               No hay nada agregado a la lista...
             </Text>
           </View>
@@ -412,7 +452,7 @@ const HomeScreen = () => {
         </TouchableOpacity>
       </View>
       <PrimaryButton
-        text={'Log Out'}
+        text={'Cerrar Sesión'}
         allowed={true}
         useIndicator={isLoading}
         handlePress={handleSignOut}

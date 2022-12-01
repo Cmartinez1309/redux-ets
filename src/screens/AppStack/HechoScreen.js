@@ -412,7 +412,7 @@ const HomeScreen = () => {
         </View>
       </View>
       <PrimaryButton
-        text={'Log Out'}
+        text={'Cerrar Sesión'}
         allowed={true}
         useIndicator={isLoading}
         handlePress={handleSignOut}
