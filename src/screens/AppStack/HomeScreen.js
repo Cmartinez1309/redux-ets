@@ -28,6 +28,7 @@ import {
   get,
   push,
   update,
+  remove,
   set,
   onValue,
   orderByChild,
@@ -251,14 +252,9 @@ const HomeScreen = () => {
     try {
       const db = getDatabase();
 
-      update(ref(db, 'listas/' + isCurrentUser + '/' + listaSeleccionada.key), {
-        read: false,
-      });
+      remove(ref(db, 'listas/' + isCurrentUser + '/' + listaSeleccionada.key));
 
       let nuevaLista = isLista.map((lista) => {
-        if (lista.lista == listaSeleccionada.lista) {
-          return { ...lista, read: false };
-        }
         return lista;
       });
       let nuevaListaHaciendo = isListaHaciendo.filter(
@@ -266,10 +262,10 @@ const HomeScreen = () => {
       );
       setLista(nuevaLista);
       setListaHaciendo(nuevaListaHaciendo);
-      setListaHecho((isListaHecho) => [
-        ...isListaHecho,
-        { lista: listaSeleccionada.lista, read: false },
-      ]);
+      // setListaHecho((isListaHecho) => [
+      //   ...isListaHecho,
+      //   { lista: listaSeleccionada.lista, read: false },
+      // ]);
       // setIsHaciendoCount(isHaciendoCount - 1);
       // setIsHechoCount(isHechoCount + 1);
     } catch (error) {
@@ -351,7 +347,7 @@ const HomeScreen = () => {
           // borderColor: 'white',
           // borderWidth: 1,
         }}
-        onPress={() => marcarNoComoLeido(item, index)}
+        onPress={() => borrarLista(item, index)}
       >
         <View style={{}}>
           <Image
