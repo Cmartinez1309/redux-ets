@@ -300,6 +300,26 @@ const HomeScreen = () => {
           </Text>
         </TouchableOpacity>
       )}
+      <TouchableOpacity onPress={() => marcarNoComoLeido(item, index)}>
+        <View
+          style={{
+            flex: 1,
+            alignItems: 'center',
+            justifyContent: 'center',
+            maxWidth: 40,
+          }}
+        >
+          <Image
+            source={require('../../../assets/delete.png')}
+            style={{
+              height: 20,
+              width: 20,
+              alignContent: 'center',
+              justifyContent: 'center',
+            }}
+          />
+        </View>
+      </TouchableOpacity>
     </View>
   );
 
