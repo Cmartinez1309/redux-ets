@@ -13,7 +13,7 @@ import {
   SafeAreaView,
   Alert,
 } from 'react-native';
-import * as ImagePicker from 'expo-image-picker';
+
 import { useDispatch, useSelector } from 'react-redux';
 import { signOutUser } from '../../redux/features/firebase/firebaseSlice';
 import PrimaryButton from '../../components/buttons/PrimaryButton';
@@ -347,12 +347,12 @@ const HomeScreen = () => {
       {isAddNewList.length > 0 ? (
         <Animatable.View
           animation={isAddNewList.length > 0 ? 'slideInRight' : 'slideOutRight'}
-          // style={
-          //   {
-          //     // borderColor: 'white',
-          //     // borderWidth: 1,
-          //   }
-          // }
+        // style={
+        //   {
+        //     // borderColor: 'white',
+        //     // borderWidth: 1,
+        //   }
+        // }
         >
           <View style={{ justifyContent: 'center' }}>
             <Text

@@ -13,7 +13,7 @@ import {
   SafeAreaView,
   Alert,
 } from 'react-native';
-import * as ImagePicker from 'expo-image-picker';
+
 import { useDispatch, useSelector } from 'react-redux';
 import { signOutUser } from '../../redux/features/firebase/firebaseSlice';
 import PrimaryButton from '../../components/buttons/PrimaryButton';
@@ -247,6 +247,38 @@ const HomeScreen = () => {
     reRender();
   };
 
+  const borrarLista = async (listaSeleccionada, index) => {
+    try {
+      const db = getDatabase();
+
+      update(ref(db, 'listas/' + isCurrentUser + '/' + listaSeleccionada.key), {
+        read: false,
+      });
+
+      let nuevaLista = isLista.map((lista) => {
+        if (lista.lista == listaSeleccionada.lista) {
+          return { ...lista, read: false };
+        }
+        return lista;
+      });
+      let nuevaListaHaciendo = isListaHaciendo.filter(
+        (lista) => lista.lista !== listaSeleccionada.lista
+      );
+      setLista(nuevaLista);
+      setListaHaciendo(nuevaListaHaciendo);
+      setListaHecho((isListaHecho) => [
+        ...isListaHecho,
+        { lista: listaSeleccionada.lista, read: false },
+      ]);
+      // setIsHaciendoCount(isHaciendoCount - 1);
+      // setIsHechoCount(isHechoCount + 1);
+    } catch (error) {
+      console.log(error);
+    }
+
+    reRender();
+  };
+
   const renderLista = (item, index) => (
     <View
       style={{
@@ -276,37 +308,51 @@ const HomeScreen = () => {
         <Text style={{ color: 'white' }}> {item.lista} </Text>
       </View>
       {item.read ? (
-        <View
+        <TouchableOpacity
           style={{
+            alignItems: 'center',
             justifyContent: 'center',
-            alignContent: 'center',
             width: 80,
           }}
+          onPress={() => marcarNoComoLeido(item, index)}
         >
-          <Ionicons name='ios-checkmark' color='white' size={15} />
-        </View>
+          <Image
+            source={require('../../../assets/Checkmark-Green.png')}
+            style={{
+              height: 20,
+              width: 20,
+            }}
+          />
+        </TouchableOpacity>
       ) : (
         <TouchableOpacity
           style={{
-            backgroundColor: '#000',
-            alignContent: 'center',
+            alignItems: 'center',
             justifyContent: 'center',
             width: 80,
           }}
           onPress={() => marcarComoLeido(item, index)}
         >
-          <Text style={{ textAlign: 'center', color: 'white' }}>
-            Mark as read
-          </Text>
+          <Image
+            source={require('../../../assets/Checkmark-vacio.png')}
+            style={{
+              height: 20,
+              width: 20,
+            }}
+          />
         </TouchableOpacity>
       )}
-      <TouchableOpacity onPress={() => marcarNoComoLeido(item, index)}>
+      <TouchableOpacity style={{
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'center',
+        maxWidth: 70,
+        // borderColor: 'white',
+        // borderWidth: 1,
+
+      }} onPress={() => marcarNoComoLeido(item, index)}>
         <View
           style={{
-            flex: 1,
-            alignItems: 'center',
-            justifyContent: 'center',
-            maxWidth: 40,
           }}
         >
           <Image
@@ -314,8 +360,6 @@ const HomeScreen = () => {
             style={{
               height: 20,
               width: 20,
-              alignContent: 'center',
-              justifyContent: 'center',
             }}
           />
         </View>
@@ -407,12 +451,12 @@ const HomeScreen = () => {
       {isAddNewList.length > 0 ? (
         <Animatable.View
           animation={isAddNewList.length > 0 ? 'slideInRight' : 'slideOutRight'}
-          // style={
-          //   {
-          //     // borderColor: 'white',
-          //     // borderWidth: 1,
-          //   }
-          // }
+        // style={
+        //   {
+        //     // borderColor: 'white',
+        //     // borderWidth: 1,
+        //   }
+        // }
         >
           <View style={{ justifyContent: 'center' }}>
             <Text
