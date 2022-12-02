@@ -44,34 +44,6 @@ export const signUpEmail = createAsyncThunk(
   }
 );
 
-export const signUpPhoneNumberVerify = createAsyncThunk(
-  'firebase/signUpPhoneNumberVerify',
-  async ({ verificationId, otp }) => {
-    try {
-      const auth = firebaseAuth.getAuth();
-      const userCredential = PhoneAuthProvider.credential(verificationId, otp);
-      const response = await signInWithCredential(auth, userCredential);
-      return response;
-    } catch (err) {
-      return { errorCode: err.code };
-    }
-  }
-);
-
-export const logInPhoneNumberVerify = createAsyncThunk(
-  'firebase/logInśPhoneNumberVerify',
-  async ({ verificationId, otp }) => {
-    try {
-      const auth = firebaseAuth.getAuth();
-      const userCredential = PhoneAuthProvider.credential(verificationId, otp);
-      const response = await signInWithCredential(auth, userCredential);
-      return response;
-    } catch (err) {
-      return { errorCode: err.code };
-    }
-  }
-);
-
 export const logInEmail = createAsyncThunk(
   'firebase/logInEmail',
   async ({ email, password }) => {
@@ -129,39 +101,7 @@ const firebaseSlice = createSlice({
       .addCase(signUpEmail.rejected, () => {
         console.log(' --> signUpEmail rejected');
       })
-      .addCase(signUpPhoneNumberVerify.pending, () => {
-        console.log(' --> signUpEmail pending');
-      })
-      .addCase(signUpPhoneNumberVerify.fulfilled, (state, action) => {
-        console.log(' --> singupPhoneNumberVerify fulfilled.');
-        console.log(action.payload);
-        if (action.payload.errorCode) {
-          switch (action.payload.errorCode) {
-            case 'auth/invalid-verification-code':
-              state.error.errorBody = 'Incorrect verification code entered.';
-              break;
-            case 'auth/code-expired':
-              state.error.errorBody =
-                'Verification Code expired. Request a new one.';
-              break;
-          }
-        }
-        if (action.payload._tokenResponse) {
-          switch (action.payload._tokenResponse.isNewUser) {
-            case true:
-              state.user = action.payload.user;
-              break;
-            case false:
-              state.error.errorBody =
-                'Phone number already is use. Please use a different phone number.';
-              break;
-          }
-        }
-      })
-      .addCase(signUpPhoneNumberVerify.rejected, (state, action) => {
-        console.log(' --> SignedIn Unsuccessful');
-        console.log(action.payload);
-      })
+
       .addCase(logInEmail.fulfilled, (state, action) => {
         console.log(' --> logInEmail fulfilled');
         if (action.payload.errorCode) {
@@ -186,33 +126,7 @@ const firebaseSlice = createSlice({
           state.user = action.payload.user;
         }
       })
-      .addCase(logInPhoneNumberVerify.fulfilled, (state, action) => {
-        console.log(' --> logInPhoneNumberVerify fulfilled.');
-        console.log(action.payload);
-        if (action.payload.errorCode) {
-          switch (action.payload.errorCode) {
-            case 'auth/invalid-verification-code':
-              state.error.errorBody = 'Incorrect verification code entered.';
-              break;
-            case 'auth/code-expired':
-              state.error.errorBody =
-                'Verification Code expired. Request a new one.';
-              break;
-          }
-        }
-        if (action.payload._tokenResponse) {
-          console.log(action.payload._tokenResponse);
-          switch (action.payload._tokenResponse.isNewUser) {
-            case true:
-              state.error.errorBody =
-                'This phone number is not registered, but is now signed up with our instagram clone servers. Please login again to continue.';
-              break;
-            case false:
-              state.user = action.payload.user;
-              break;
-          }
-        }
-      })
+
       .addCase(signOutUser.fulfilled, (state) => {
         console.log(' -> singOutUser fulfilled');
         state.user = {};
