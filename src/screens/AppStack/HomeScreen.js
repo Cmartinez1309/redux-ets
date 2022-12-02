@@ -342,19 +342,18 @@ const HomeScreen = () => {
           />
         </TouchableOpacity>
       )}
-      <TouchableOpacity style={{
-        flex: 1,
-        alignItems: 'center',
-        justifyContent: 'center',
-        maxWidth: 70,
-        // borderColor: 'white',
-        // borderWidth: 1,
-
-      }} onPress={() => marcarNoComoLeido(item, index)}>
-        <View
-          style={{
-          }}
-        >
+      <TouchableOpacity
+        style={{
+          flex: 1,
+          alignItems: 'center',
+          justifyContent: 'center',
+          maxWidth: 70,
+          // borderColor: 'white',
+          // borderWidth: 1,
+        }}
+        onPress={() => marcarNoComoLeido(item, index)}
+      >
+        <View style={{}}>
           <Image
             source={require('../../../assets/delete.png')}
             style={{
@@ -385,7 +384,11 @@ const HomeScreen = () => {
           placeholder='Insertar titulo de lista'
           placeholderTextColor='#dbdbdb'
           color='white'
-          style={{ backgroundColor: 'transparent', paddingLeft: 15 }}
+          style={{
+            backgroundColor: 'transparent',
+            paddingLeft: 15,
+            textAlign: 'center',
+          }}
           ref={(component) => {
             textInputRef = component;
           }}
@@ -451,12 +454,12 @@ const HomeScreen = () => {
       {isAddNewList.length > 0 ? (
         <Animatable.View
           animation={isAddNewList.length > 0 ? 'slideInRight' : 'slideOutRight'}
-        // style={
-        //   {
-        //     // borderColor: 'white',
-        //     // borderWidth: 1,
-        //   }
-        // }
+          // style={
+          //   {
+          //     // borderColor: 'white',
+          //     // borderWidth: 1,
+          //   }
+          // }
         >
           <View style={{ justifyContent: 'center' }}>
             <Text
