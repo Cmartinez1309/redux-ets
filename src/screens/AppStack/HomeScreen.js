@@ -68,25 +68,24 @@ const HomeScreen = () => {
 
   let textInputRef = null;
 
-  const handleSignOut = () => {
-    console.log('cerrando sesión...');
-    dispatch(CHANGE_LOADING(true));
-    dispatch(signOutUser()).then(() => {
-      setMessage('Se cerró la sesión!');
-      dispatch(CHANGE_LOADING(false));
-    });
-  };
+  const reRender = () => {
+    const db = getDatabase();
 
-  const handleRequestClose = () => {
-    setMessage('');
-  };
+    const dbRef = ref(getDatabase());
+    let returnArr = [];
+    get(child(dbRef, `listas/${isCurrentUser}`))
+      .then((snapshot) => {
+        snapshot.forEach((childSnapshot) => {
+          let item = childSnapshot.val();
+          item.key = childSnapshot.key;
+          returnArr.push(item);
+        });
 
-  const showAddNewList = () => {
-    setIsAddNewListVisible(true);
-  };
-
-  const hideAddNewList = () => {
-    setIsAddNewListVisible(false);
+        setLista(returnArr);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
   };
 
   useEffect(() => {
@@ -122,7 +121,28 @@ const HomeScreen = () => {
       .catch((error) => {
         console.error(error);
       });
-  }, [navigation]);
+  }, [isCurrentUser, navigation]);
+
+  const handleSignOut = () => {
+    console.log('cerrando sesión...');
+    dispatch(CHANGE_LOADING(true));
+    dispatch(signOutUser()).then(() => {
+      setMessage('Se cerró la sesión!');
+      dispatch(CHANGE_LOADING(false));
+    });
+  };
+
+  const handleRequestClose = () => {
+    setMessage('');
+  };
+
+  const showAddNewList = () => {
+    setIsAddNewListVisible(true);
+  };
+
+  const hideAddNewList = () => {
+    setIsAddNewListVisible(false);
+  };
 
   // const UploadScreen = () => {
   //   const [image, setImage] = useState(null);
@@ -225,26 +245,6 @@ const HomeScreen = () => {
     }
 
     reRender();
-  };
-
-  const reRender = () => {
-    const db = getDatabase();
-
-    const dbRef = ref(getDatabase());
-    let returnArr = [];
-    get(child(dbRef, `listas/${isCurrentUser}`))
-      .then((snapshot) => {
-        snapshot.forEach((childSnapshot) => {
-          let item = childSnapshot.val();
-          item.key = childSnapshot.key;
-          returnArr.push(item);
-        });
-
-        setLista(returnArr);
-      })
-      .catch((error) => {
-        console.error(error);
-      });
   };
 
   const renderLista = (item, index) => (
