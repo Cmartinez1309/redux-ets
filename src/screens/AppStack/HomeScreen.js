@@ -288,21 +288,7 @@ const HomeScreen = () => {
         borderColor: 'black',
       }}
     >
-      {/* <View style={{ height: 70, width: 70 }}>
-        <Image
-          source={require('../../../assets/icon.png')}
-          style={{ flex: 1, height: null, width: null, borderRadius: 35 }}
-        />
-      </View> */}
 
-      <View
-        style={{
-          justifyContent: 'center',
-          width: 170,
-        }}
-      >
-        <Text style={{ color: 'white' }}> {item.lista} </Text>
-      </View>
       {item.read ? (
         <TouchableOpacity
           style={{
@@ -338,6 +324,22 @@ const HomeScreen = () => {
           />
         </TouchableOpacity>
       )}
+      {/* <View style={{ height: 70, width: 70 }}>
+        <Image
+          source={require('../../../assets/icon.png')}
+          style={{ flex: 1, height: null, width: null, borderRadius: 35 }}
+        />
+      </View> */}
+
+      <View
+        style={{
+          justifyContent: 'center',
+          width: 170,
+        }}
+      >
+        <Text style={{ color: 'white' }}> {item.lista} </Text>
+      </View>
+
       <TouchableOpacity
         style={{
           flex: 1,
@@ -450,12 +452,12 @@ const HomeScreen = () => {
       {isAddNewList.length > 0 ? (
         <Animatable.View
           animation={isAddNewList.length > 0 ? 'slideInRight' : 'slideOutRight'}
-          // style={
-          //   {
-          //     // borderColor: 'white',
-          //     // borderWidth: 1,
-          //   }
-          // }
+        // style={
+        //   {
+        //     // borderColor: 'white',
+        //     // borderWidth: 1,
+        //   }
+        // }
         >
           <View style={{ justifyContent: 'center' }}>
             <Text

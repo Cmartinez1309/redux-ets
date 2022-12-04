@@ -28,6 +28,7 @@ import {
   get,
   push,
   update,
+  remove,
   set,
   onValue,
   orderByChild,
@@ -55,6 +56,9 @@ const HomeScreen = () => {
   const [isListaHecho, setListaHecho] = useState([]);
   const [isCurrentUser, setIsCurrentUser] = useState('');
 
+  const isListaHaciendoo = isLista.filter((lista) => !lista.read);
+  const isListaHechoo = isLista.filter((lista) => lista.read);
+
   const dispatch = useDispatch();
   const isLoading = useSelector((state) => state.loading.value);
   const navigation = useNavigation();
@@ -64,6 +68,61 @@ const HomeScreen = () => {
   );
 
   let textInputRef = null;
+
+  const reRender = () => {
+    const db = getDatabase();
+
+    const dbRef = ref(getDatabase());
+    let returnArr = [];
+    get(child(dbRef, `listas/${isCurrentUser}`))
+      .then((snapshot) => {
+        snapshot.forEach((childSnapshot) => {
+          let item = childSnapshot.val();
+          item.key = childSnapshot.key;
+          returnArr.push(item);
+        });
+
+        setLista(returnArr);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  };
+
+  useEffect(() => {
+    const auth = getAuth();
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        // User is signed in, see docs for a list of available properties
+        // https://firebase.google.com/docs/reference/js/firebase.User
+        const uid = user.uid;
+        setIsCurrentUser(uid);
+
+        // ...
+      } else {
+        // User is signed out
+        // ...
+      }
+    });
+
+    const db = getDatabase();
+
+    const dbRef = ref(getDatabase());
+    let returnArr = [];
+    get(child(dbRef, `listas/${isCurrentUser}`))
+      .then((snapshot) => {
+        snapshot.forEach((childSnapshot) => {
+          let item = childSnapshot.val();
+          item.key = childSnapshot.key;
+          returnArr.push(item);
+        });
+
+        setLista(returnArr);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  }, [isCurrentUser, navigation]);
 
   const handleSignOut = () => {
     console.log('cerrando sesión...');
@@ -122,6 +181,7 @@ const HomeScreen = () => {
     // setIsTotalCount(isTotalCount + 1);
     // setIsHaciendoCount(isHaciendoCount + 1);
     // console.log(isLista);
+    reRender();
   };
 
   const marcarComoLeido = async (listaSeleccionada, index) => {
@@ -152,76 +212,118 @@ const HomeScreen = () => {
     } catch (error) {
       console.log(error);
     }
+
+    reRender();
   };
 
-  useEffect(() => {
-    const auth = getAuth();
-    onAuthStateChanged(auth, (user) => {
-      if (user) {
-        // User is signed in, see docs for a list of available properties
-        // https://firebase.google.com/docs/reference/js/firebase.User
-        const uid = user.uid;
-        setIsCurrentUser(uid);
+  const marcarNoComoLeido = async (listaSeleccionada, index) => {
+    try {
+      const db = getDatabase();
 
-        // ...
-      } else {
-        // User is signed out
-        // ...
-      }
-    });
-
-    // const db = getDatabase();
-
-    // const dbRef = ref(getDatabase());
-    // let returnArr = [];
-    // get(child(dbRef, `listas/${isCurrentUser}`))
-    //   .then((snapshot) => {
-    //     snapshot.forEach((childSnapshot) => {
-    //       let item = childSnapshot.val();
-    //       item.key = childSnapshot.key;
-    //       returnArr.push(item);
-    //     });
-
-    //     setLista(returnArr);
-    //   })
-    //   .catch((error) => {
-    //     console.error(error);
-    //   });
-  });
-
-  useEffect(() => {
-    const db = getDatabase();
-
-    const dbRef = ref(getDatabase());
-    let returnArr = [];
-    get(child(dbRef, `listas/${isCurrentUser}`))
-      .then((snapshot) => {
-        snapshot.forEach((childSnapshot) => {
-          let item = childSnapshot.val();
-          item.key = childSnapshot.key;
-          returnArr.push(item);
-        });
-
-        setLista(returnArr);
-      })
-      .catch((error) => {
-        console.error(error);
+      update(ref(db, 'listas/' + isCurrentUser + '/' + listaSeleccionada.key), {
+        read: false,
       });
-  }, [isLista]);
 
-  const isListaHaciendoo = isLista.filter((lista) => !lista.read);
-  const isListaHechoo = isLista.filter((lista) => lista.read);
+      let nuevaLista = isLista.map((lista) => {
+        if (lista.lista == listaSeleccionada.lista) {
+          return { ...lista, read: false };
+        }
+        return lista;
+      });
+      let nuevaListaHaciendo = isListaHaciendo.filter(
+        (lista) => lista.lista !== listaSeleccionada.lista
+      );
+      setLista(nuevaLista);
+      setListaHaciendo(nuevaListaHaciendo);
+      setListaHecho((isListaHecho) => [
+        ...isListaHecho,
+        { lista: listaSeleccionada.lista, read: false },
+      ]);
+      // setIsHaciendoCount(isHaciendoCount - 1);
+      // setIsHechoCount(isHechoCount + 1);
+    } catch (error) {
+      console.log(error);
+    }
+
+    reRender();
+  };
+
+  const borrarLista = async (listaSeleccionada, index) => {
+    try {
+      const db = getDatabase();
+
+      remove(ref(db, 'listas/' + isCurrentUser + '/' + listaSeleccionada.key));
+
+      let nuevaLista = isLista.map((lista) => {
+        return lista;
+      });
+      let nuevaListaHaciendo = isListaHaciendo.filter(
+        (lista) => lista.lista !== listaSeleccionada.lista
+      );
+      setLista(nuevaLista);
+      setListaHaciendo(nuevaListaHaciendo);
+      // setListaHecho((isListaHecho) => [
+      //   ...isListaHecho,
+      //   { lista: listaSeleccionada.lista, read: false },
+      // ]);
+      // setIsHaciendoCount(isHaciendoCount - 1);
+      // setIsHechoCount(isHechoCount + 1);
+    } catch (error) {
+      console.log(error);
+    }
+
+    reRender();
+  };
 
   const renderLista = (item, index) => (
     <View
       style={{
-        minHeight: 70,
+        minHeight: 60,
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignContent: 'center',
         width: 325,
+        backgroundColor: '#0B0B0B',
+        borderBottomWidth: 4,
+        borderColor: 'black',
       }}
     >
+
+      {item.read ? (
+        <TouchableOpacity
+          style={{
+            alignItems: 'center',
+            justifyContent: 'center',
+            width: 80,
+          }}
+          onPress={() => marcarNoComoLeido(item, index)}
+        >
+          <Image
+            source={require('../../../assets/Checkmark-Green.png')}
+            style={{
+              height: 20,
+              width: 20,
+            }}
+          />
+        </TouchableOpacity>
+      ) : (
+        <TouchableOpacity
+          style={{
+            alignItems: 'center',
+            justifyContent: 'center',
+            width: 80,
+          }}
+          onPress={() => marcarComoLeido(item, index)}
+        >
+          <Image
+            source={require('../../../assets/Checkmark-vacio.png')}
+            style={{
+              height: 20,
+              width: 20,
+            }}
+          />
+        </TouchableOpacity>
+      )}
       {/* <View style={{ height: 70, width: 70 }}>
         <Image
           source={require('../../../assets/icon.png')}
@@ -231,37 +333,34 @@ const HomeScreen = () => {
 
       <View
         style={{
-          borderWidth: 1,
-          borderColor: 'white',
           justifyContent: 'center',
           width: 170,
         }}
       >
         <Text style={{ color: 'white' }}> {item.lista} </Text>
       </View>
-      {item.read ? (
-        <View
-          style={{
-            justifyContent: 'center',
-            alignContent: 'center',
-            width: 80,
-          }}
-        >
-          <Ionicons name='ios-checkmark' color='white' size={15} />
+
+      <TouchableOpacity
+        style={{
+          flex: 1,
+          alignItems: 'center',
+          justifyContent: 'center',
+          maxWidth: 70,
+          // borderColor: 'white',
+          // borderWidth: 1,
+        }}
+        onPress={() => borrarLista(item, index)}
+      >
+        <View style={{}}>
+          <Image
+            source={require('../../../assets/delete.png')}
+            style={{
+              height: 20,
+              width: 20,
+            }}
+          />
         </View>
-      ) : (
-        <TouchableOpacity
-          style={{
-            backgroundColor: '#a5deba',
-            alignContent: 'center',
-            justifyContent: 'center',
-            width: 80,
-          }}
-          onPress={() => marcarComoLeido(item, index)}
-        >
-          <Text style={{ textAlign: 'center' }}>Mark as read</Text>
-        </TouchableOpacity>
-      )}
+      </TouchableOpacity>
     </View>
   );
 
@@ -283,7 +382,11 @@ const HomeScreen = () => {
           placeholder='Insertar titulo de lista'
           placeholderTextColor='#dbdbdb'
           color='white'
-          style={{ backgroundColor: 'transparent', paddingLeft: 15 }}
+          style={{
+            backgroundColor: 'transparent',
+            paddingLeft: 15,
+            textAlign: 'center',
+          }}
           ref={(component) => {
             textInputRef = component;
           }}
@@ -331,12 +434,14 @@ const HomeScreen = () => {
         </View>
       ) : null} */}
       <FlatList
+        style={{}}
+        contentContainerStyle={{ borderRadius: 20, overflow: 'hidden' }}
         data={isLista.filter((lista) => lista.read)}
         renderItem={({ item }, index) => renderLista(item, index)}
         keyExtractor={(item, index) => index.toString()}
         ListEmptyComponent={
           <View style={{ marginTop: 50, alignItems: 'center' }}>
-            <Text style={{ color: 'white' }}>
+            <Text style={{ color: 'white', paddingBottom: 10 }}>
               No hay nada agregado a la lista...
             </Text>
           </View>
@@ -376,6 +481,7 @@ const HomeScreen = () => {
       ) : null}
 
       <View style={styles.tabContainer}>
+
         <TouchableOpacity
           style={{
             ...styles.subTabContainer,
@@ -398,7 +504,7 @@ const HomeScreen = () => {
           onPress={() => navigation.navigate('Haciendo')}
         >
           <Text style={{ color: 'white' }}>Haciendo</Text>
-          <Text style={{ color: 'white' }}>{isListaHechoo.length}</Text>
+          <Text style={{ color: 'white' }}>{isListaHaciendoo.length}</Text>
         </TouchableOpacity>
         <View
           style={{
@@ -408,7 +514,7 @@ const HomeScreen = () => {
           }}
         >
           <Text style={{ color: 'white' }}>Hecho</Text>
-          <Text style={{ color: 'white' }}>{isListaHaciendoo.length}</Text>
+          <Text style={{ color: 'white' }}>{isListaHechoo.length}</Text>
         </View>
       </View>
       <PrimaryButton

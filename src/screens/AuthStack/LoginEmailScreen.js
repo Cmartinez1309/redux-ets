@@ -16,7 +16,6 @@ import PasswordField from '../../components/fields/Login/PasswordField';
 import NewSignUp from '../../components/footers/auth/NewSignUp';
 import AlertModal from '../../components/modals/AlertModal';
 
-import LoginWithFacebook from '../../components/loginMethods/LoginWithFacebook';
 import SecondaryButton from '../../components/buttons/SecondaryButton';
 
 import {
