@@ -48,7 +48,7 @@ export const logInEmail = createAsyncThunk(
   'firebase/logInEmail',
   async ({ email, password }) => {
     try {
-      console.log('--> logging in using email & password');
+      console.log(' * Iniciando sesion usando correo y contraseña');
       const auth = firebaseAuth.getAuth();
       const userCredential = await firebaseAuth.signInWithEmailAndPassword(
         auth,
@@ -84,7 +84,7 @@ const firebaseSlice = createSlice({
   extraReducers(builder) {
     builder
       .addCase(signUpEmail.fulfilled, (state, action) => {
-        console.log(' --> signUpEmail fulfilled');
+        console.log(' * Registro intento');
         console.log(action);
         if (action.payload.errorCode) {
           switch (action.payload.errorCode) {
@@ -99,11 +99,11 @@ const firebaseSlice = createSlice({
         }
       })
       .addCase(signUpEmail.rejected, () => {
-        console.log(' --> signUpEmail rejected');
+        console.log(' * Error en registro');
       })
 
       .addCase(logInEmail.fulfilled, (state, action) => {
-        console.log(' --> logInEmail fulfilled');
+        console.log(' * Inicio de sesion intento');
         if (action.payload.errorCode) {
           console.log(action.payload.errorCode);
           switch (action.payload.errorCode) {
@@ -122,18 +122,17 @@ const firebaseSlice = createSlice({
           }
         }
         if (action.payload.user) {
-          console.log(' * Signed in successful');
+          console.log(' * Inicio de sesion exitoso!');
           state.user = action.payload.user;
         }
       })
 
       .addCase(signOutUser.fulfilled, (state) => {
-        console.log(' -> singOutUser fulfilled');
+        console.log(' * Sesion cerrada exitosamente!');
         state.user = {};
       })
       .addCase(signOutUser.rejected, (state) => {
-        state.error.errorBody =
-          'Error occured. Please try again after sometime.';
+        state.error.errorBody = 'Ocurrio un error. Intente de nuevo.';
       });
   },
 });
